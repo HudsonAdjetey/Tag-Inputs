@@ -1,60 +1,77 @@
 import React, { useState } from 'react';
+import { render } from 'react-dom';
 import { WithContext as ReactTags } from 'react-tag-input';
 
-const suggestions = [
-  {
-    id: '1',
-    name: 'Thailand'
-  }
-];
+const COUNTRIES = [
+  { id: "United States", name: "United States" },
+  { id: "United Kingdom", name: "United Kingdom" },
+  { id: "Germany", name: "Germany" },
+  
+]
+
+const suggestions = COUNTRIES.map((country) => {
+  return {
+    id: country,
+    text: country,
+  };
+});
 
 const KeyCodes = {
   comma: 188,
-  enter: 13
+  enter: 13,
 };
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 const App = () => {
   const [tags, setTags] = useState([
-    {
-      id: "1",
-      name: 'Thailand'
-    },
-    {
-      id: '2',
-      name: 'India'
-    }
+    { id: 'Thailand', text: 'Thailand' },
+    { id: 'India', text: 'India' },
+    { id: 'Vietnam', text: 'Vietnam' },
+    { id: 'Turkey', text: 'Turkey' },
   ]);
 
   const handleDelete = (i) => {
-    const delItems = tags.filter((item, index) => index !== i);
-    setTags(delItems);
+    setTags(tags.filter((tag, index) => index !== i));
   };
 
   const handleAddition = (tag) => {
     setTags([...tags, tag]);
   };
-console.log(tags)
-  const handleDrag = (tag) => {
-    setTags([...tags, tag])
-  }
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setTags(newTags);
+  };
+
+  const handleTagClick = (index) => {
+    console.log('The tag at index ' + index + ' was clicked');
+  };
+
   return (
-    <div>
-      <h1>React Tags Example</h1>
+    <div className="app">
+      <h1> React Tags </h1>
       <div>
         <ReactTags
           tags={tags}
           suggestions={suggestions}
+          delimiters={delimiters}
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
-          inputFieldPosition='top'
-          autocomplete={true}
+          handleTagClick={handleTagClick}
+          inputFieldPosition="top"
+          autocomplete
           editable
-          
         />
       </div>
     </div>
   );
 };
 
-export default App;
+export default App
